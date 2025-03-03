@@ -1,3 +1,7 @@
+# Team 19
+
+# Flag sensors using ml models
+
 # Import necessary libraries
 import mysql.connector
 import pandas as pd

@@ -1,3 +1,7 @@
+# Team 19
+
+# Simulate real time data
+
 # Import necessary libraries
 import mysql.connector
 from datetime import datetime
@@ -26,9 +30,9 @@ conn.commit()
 # Insert sensor data to database
 def simulate_and_insert():
     while True:
-        # Simulate Line 4 sensor data with 8 sensors between 0-500 after checking values in the provided cvs file (max around 400)
+        # Simulate Line 4 sensor data with 8 sensors using random numbers between 0-500 after checking values in the provided cvs file (max around 400)
         line4_data = {f"r{str(i).zfill(2)}": np.random.randint(0, 500) for i in range(1, 9)}
-        # Simulate line 5 sensor data 17 sensors between 0-390 provided cvs file had a max around 350
+        # Simulate line 5 sensor data 17 sensors between 0-390 using random numbers provided cvs file had a max around 390
         line5_data = {f"r{str(i).zfill(2)}": np.random.randint(0, 390) for i in range(1, 18)}
         
         # Get current time
