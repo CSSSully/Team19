@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rakusens</title>
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Google Charts Library -->
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    // Load Google Charts
+    google.charts.load('current', {'packages':['corechart', 'pie']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    // Function to fetch data and draw the chart
+    function drawChart() {
+      fetch('path_to_php_file/db_connect.php') // Replace with actual path to PHP file
+        .then(response => response.json())
+        .then(data => {
+          var chartData = [['Flag', 'Count']];
+
+          // Prepare the data for the pie chart
+          data.forEach(function(row) {
+            chartData.push([row.flag, parseInt(row.count)]);
+          });
+
+          // Create the DataTable
+          var dataTable = google.visualization.arrayToDataTable(chartData);
+
+          // Create and draw the pie chart
+          var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+          chart.draw(dataTable, {
+            title: 'Sensor Data Flags',
+            is3D: true,
+            slices: {
+              0: { offset: 0.1 },
+              1: { offset: 0.1 },
+              2: { offset: 0.1 }
+            }
+          });
+        });
+    }
+
+    // Refresh the chart every 30 seconds
+    setInterval(drawChart, 30000);
+  </script>
+</head>
+<body>
+  <!-- Toggle Switch for Light/Dark Mode -->
+  <div class="theme-switch-wrapper">
+    <label class="theme-switch" for="checkbox">
+      <input type="checkbox" id="checkbox">
+      <div class="slider round"></div>
+    </label>
+    <span>Switch Theme</span>
+  </div>
+
+  <!-- Top Section with Banner and Logo -->
+  <div class="top-section">
+    <div class="banner-container">
+      <img src="images/rakusensbanner-4-1024x256.png" class="banner-img" alt="Rakusen's Banner">
+    </div>
+
+    <div class="logo-container">
+      <h1>Rakusen's</h1>
+    </div>
+  </div>
+
+  <!-- Title for Dashboard -->
+  <h2>Visualisation dashboard for temperature data</h2>
+
+  <!-- Pie Chart Container -->
+  <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+
+</body>
+</html>
