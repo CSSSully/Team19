@@ -53,6 +53,25 @@ CREATE TABLE IF NOT EXISTS line5_sensors (
     r16 FLOAT NOT NULL,
     r17 FLOAT NOT NULL
 );
+-- Admins table (must exist for admin authentication)
+CREATE TABLE IF NOT EXISTS `admins` (
+  `id` INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(50) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Users table (for regular users)
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(50) NOT NULL UNIQUE,
+  `email` VARCHAR(100) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL,
+  `created_by` INT(11) UNSIGNED,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`created_by`) REFERENCES `admins`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 2. Open simulate_data.py in vscode
    
