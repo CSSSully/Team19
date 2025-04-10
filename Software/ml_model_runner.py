@@ -84,6 +84,14 @@ def check_anomalies(data, sensor_id, line_number):
         status = "🟠 AMBER (Warning)"
     else:
         status = "🟢 GREEN (Normal)"
+    #Extract the flag from the status string
+    flag = status.split()[1]
+    #Insert the colour into the database
+    insert_query = """ INSERT INTO sensor_flags (timestamp, line_number, sensor_id, sensor_value, flag)
+    VALUES (%s, %s, %s, %s, %s) """
+    values = (timestamp.strftime('%y-%m-%d %H:%M:%S'), line_number, sensor_id, sensor_value, flag)
+    cursor.execute(insert_query, values)
+    conn.commit
     
     # Show which sensor has been analysed
     print(f"Line {line_number} Sensor {sensor_column.upper()} Value: {sensor_value}, Expected Value: {green_lower} to {green_upper}, Status: {status}\n")
@@ -95,4 +103,5 @@ while True:
         if latest_data:
             for sensor_id in range(1, sensors + 1):
                 check_anomalies(latest_data, sensor_id, line)
-    time.sleep(30)
+    time.sleep(30) 
+    
