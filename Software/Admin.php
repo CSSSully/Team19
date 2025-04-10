@@ -5,7 +5,7 @@ session_start();
 $servername = "localhost";
 $dbusername = "root";
 $dbpassword = "";
-$dbname = "user_db";
+$dbname = "rakusens";
 
 // Create connection
 $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
@@ -20,7 +20,11 @@ function isAdminLoggedIn() {
     return isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 }
 
-// Admin login
+function isUserLoggedIn() {
+    return isset($_SESSION['username']);
+}
+
+// Handle Admin Login
 if (isset($_POST['admin_login'])) {
     $username = $conn->real_escape_string($_POST['username']);
     $password = $_POST['password'];
@@ -30,8 +34,32 @@ if (isset($_POST['admin_login'])) {
     
     if ($result->num_rows > 0) {
         $_SESSION['admin_logged_in'] = true;
+        $_SESSION['admin_username'] = $username;
     } else {
         $admin_login_error = "Invalid admin credentials";
+    }
+}
+
+// Handle User Login
+if (isset($_POST['user_login'])) {
+    $username = $conn->real_escape_string($_POST['username']);
+    $password = $_POST['password'];
+
+    $sql = "SELECT * FROM users WHERE username = '$username'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['username'] = $username;
+            $_SESSION['user_id'] = $user['id'];
+            header("Location: welcome.php");
+            exit();
+        } else {
+            $user_login_error = "Invalid password.";
+        }
+    } else {
+        $user_login_error = "No user found with that username.";
     }
 }
 
@@ -61,6 +89,24 @@ if (isset($_GET['delete_user']) && isAdminLoggedIn()) {
     } else {
         $delete_error = "Error deleting user: " . $conn->error;
     }
+}
+
+// Admin logout
+if (isset($_GET['admin_logout'])) {
+    unset($_SESSION['admin_logged_in']);
+    unset($_SESSION['admin_username']);
+    session_destroy();
+    header("Location: index.php");
+    exit();
+}
+
+// User logout
+if (isset($_GET['user_logout'])) {
+    unset($_SESSION['username']);
+    unset($_SESSION['user_id']);
+    session_destroy();
+    header("Location: index.php");
+    exit();
 }
 
 // Get all users for admin panel
