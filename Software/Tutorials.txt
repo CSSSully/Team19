@@ -72,6 +72,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   FOREIGN KEY (`created_by`) REFERENCES `admins`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS sensor_flags (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    line_number INT NOT NULL,
+    sensor_id VARCHAR(4) NOT NULL,
+    status ENUM('green', 'amber', 'red') NOT NULL,
+    timestamp DATETIME NOT NULL
+);
+
 
 2. Open simulate_data.py in vscode
    
