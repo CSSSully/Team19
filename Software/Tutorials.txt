@@ -2,6 +2,14 @@ Team 19
 
 Tutorial how to run codes in the Software folder.
 
+Make sure the folder named "final_website" is in the 'htdocs' folder in xampp
+path file should look like this:
+C://xampp/htdocs/final_website/
+
+Access the website by visiting
+http://localhost/final_website/homepage.html
+
+
 Make sure that the files "models","ml_model_runner.py" and "simulate_data.py" are in the same folder.
 
 
