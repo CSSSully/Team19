@@ -1,107 +1,219 @@
-# Team 19
-
-# Flag sensors using ml models
-
-# Import necessary libraries
+from flask import Flask, render_template, request
 import mysql.connector
 import pandas as pd
 import joblib
+import threading
 import time
+import random
+from datetime import datetime, timedelta
 
-# Connect to database
+simulate_changes = True
+
+app = Flask(__name__, template_folder='templates')
+
+# Connect to MySQL
 conn = mysql.connector.connect(
     host="localhost",
-    user="root", 
-    password="", 
+    user="root",
+    password="",
     database="rakusens"
 )
 
-# Check if connected
-
 if conn.is_connected():
-    print('Connected to database')
+    print('✅ Connected to database')
 else:
-    print('Connection failed')
+    print('❌ Connection failed')
 
 cursor = conn.cursor()
 
-# Get the newest data from the tables
+# Store processed results
+results = []
+
+# Lock for thread synchronization
+results_lock = threading.Lock()
+
+# Mapping between ENUM values and full status descriptions
+status_mapping = {
+    'green': '🟢 GREEN (Normal)',
+    'amber': '🟠 AMBER (Warning)',
+    'red': '🔴 RED (Anomaly)'
+}
 
 def get_latest_data(table_name):
     query = f"SELECT * FROM {table_name} ORDER BY timestamp DESC LIMIT 1;"
     cursor.execute(query)
     row = cursor.fetchone()
-    
-    # Line 4 has 8 Sensors, Line 5 has 17
+
     if row:
         if table_name == 'line4_sensors':
             columns = ["id", "timestamp"] + [f"r{str(i).zfill(2)}" for i in range(1, 9)]
         else:
             columns = ["id", "timestamp"] + [f"r{str(i).zfill(2)}" for i in range(1, 18)]
+        
         data = dict(zip(columns, row))
+        print(f"🔍 Fetched latest row from {table_name}: {data['timestamp']}")
         return data
     return None
 
-# Flag sensor using provided ml models for each sensor specific model provided
-
 def check_anomalies(data, sensor_id, line_number):
     sensor_column = f"r{sensor_id:02d}"
-    model_path = f"models/line{line_number}/prophet_{sensor_column}.pkl" # Path to models 
-    model = joblib.load(model_path) # Load model
+    model_path = f"models/line{line_number}/prophet_{sensor_column}.pkl"
 
-    timestamp = pd.to_datetime(data["timestamp"]) # Convert datetime needed for the model
+    try:
+        model = joblib.load(model_path)
+    except FileNotFoundError:
+        return f"⚠️ Model for Line {line_number} Sensor {sensor_column.upper()} not found."
+
+    timestamp = datetime.now()
+    timestamp += timedelta(milliseconds=random.randint(1, 500))
+
     df = pd.DataFrame({"ds": [timestamp]})
-    forecast = model.predict(df) # Prediction
-
-    # Get predicted values
+    forecast = model.predict(df)
 
     yhat = forecast["yhat"].values[0]
     lower = forecast["yhat_lower"].values[0]
     upper = forecast["yhat_upper"].values[0]
 
-    # Get real sensor value
     sensor_value = data[sensor_column]
 
-    # Traffic light system boundaries
-    green_lower, green_upper = lower, upper
-    amber_lower_start, amber_lower_end = lower - 15, lower
-    amber_upper_start, amber_upper_end = upper, upper + 15
-    red_lower, red_upper = amber_lower_start, amber_upper_end
+    # Adjusted thresholds to reduce red flags
+    amber_lower_start, amber_lower_end = lower - 20, lower + 20  # Increased the range for amber
+    amber_upper_start, amber_upper_end = upper - 20, upper + 20
+    red_lower, red_upper = amber_lower_start - 10, amber_upper_end + 10  # Expanded red range slightly
 
-    # Show results
-    print(f"Predicted Value (yhat): {yhat}")
-    print(f"Lower Bound (yhat_lower): {lower}")
-    print(f"Upper Bound (yhat_upper): {upper}")
-    print("Temperature Ranges:")
-    print(f"  - 🟢 Green: {green_lower} to {green_upper}")
-    print(f"  - 🟠 Amber: {amber_lower_start} to {amber_lower_end} and {amber_upper_start} to {amber_upper_end}")
-    print(f"  - 🔴 Red: Less than {red_lower} or more than {red_upper}")
-
-    # Give a colour to the sensor based on result
+    # Status checking
     if sensor_value < red_lower or sensor_value > red_upper:
-        status = "🔴 RED (Anomaly)"
+        status = "red"
     elif (amber_lower_start <= sensor_value < amber_lower_end) or (amber_upper_start < sensor_value <= amber_upper_end):
-        status = "🟠 AMBER (Warning)"
+        status = "amber"
     else:
-        status = "🟢 GREEN (Normal)"
-    #Extract the flag from the status string
-    flag = status.split()[1]
-    #Insert the colour into the database
-    insert_query = """ INSERT INTO sensor_flags (timestamp, line_number, sensor_id, sensor_value, flag)
-    VALUES (%s, %s, %s, %s, %s) """
-    values = (timestamp.strftime('%y-%m-%d %H:%M:%S'), line_number, sensor_id, sensor_value, flag)
-    cursor.execute(insert_query, values)
-    conn.commit
+        status = "green"
     
-    # Show which sensor has been analysed
-    print(f"Line {line_number} Sensor {sensor_column.upper()} Value: {sensor_value}, Expected Value: {green_lower} to {green_upper}, Status: {status}\n")
+    timestamp_str = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-# Loop to repeat flagging every 30 seconds 
-while True:
-    for line, sensors in [(4, 8), (5, 17)]: 
-        latest_data = get_latest_data(f"line{line}_sensors")
-        if latest_data:
-            for sensor_id in range(1, sensors + 1):
-                check_anomalies(latest_data, sensor_id, line)
-    time.sleep(30) 
-    
+    insert_query = """
+        INSERT INTO sensor_flags (line_number, sensor_id, status, timestamp)
+        VALUES (%s, %s, %s, %s)
+    """
+    values = (line_number, sensor_column, status, timestamp_str)
+    try:
+        cursor.execute(insert_query, values)
+        conn.commit()
+        print(f"Successfully inserted into sensor_flags: {line_number}, {sensor_column}, {status}, {timestamp_str}")
+    except Exception as e:
+        print(f"Error inserting into database: {e}")
+
+    return f"Line {line_number} Sensor {sensor_column.upper()} Value: {sensor_value:.2f}, Status: {status_mapping.get(status)}"
+
+def monitor_sensors():
+    global results
+    while True:
+        temp_results = []
+        print("\n⏳ Checking sensors...")
+
+        for line, sensor_count in [(4, 8), (5, 17)]:
+            latest_data = get_latest_data(f"line{line}_sensors")
+            if latest_data:
+                if simulate_changes:
+                    for sensor_id in range(1, sensor_count + 1):
+                        sensor_column = f"r{str(sensor_id).zfill(2)}"
+                        try:
+                            original_val = float(latest_data[sensor_column])
+                        except (ValueError, TypeError):
+                            original_val = 0.0
+
+                        if line == 4:
+                            noise = random.gauss(0, 4)
+                            if random.random() < 0.3:
+                                noise += random.uniform(-10, 10)
+                            new_value = original_val + noise
+                            print(f"Simulating Line {line} Sensor {sensor_column}: original={original_val:.2f}, noise={noise:.2f}, new={new_value:.2f}")
+                            latest_data[sensor_column] = new_value
+                        elif line == 5:
+                            model_path = f"models/line{line}/prophet_{sensor_column}.pkl"
+                            try:
+                                model = joblib.load(model_path)
+                                timestamp = pd.to_datetime(latest_data["timestamp"])
+                                df = pd.DataFrame({"ds": [timestamp]})
+                                forecast = model.predict(df)
+                                yhat = forecast["yhat"].values[0]
+                            except FileNotFoundError:
+                                yhat = original_val
+                            noise = random.gauss(0, 2)
+                            if random.random() < 0.3:
+                                noise += random.uniform(-6, 6)
+                            simulated_val = yhat + noise
+                            print(f"Simulating Line {line} Sensor {sensor_column}: yhat={yhat:.2f}, noise={noise:.2f}, simulated={simulated_val:.2f}")
+                            latest_data[sensor_column] = simulated_val
+
+                timestamp = latest_data["timestamp"]
+                for sensor_id in range(1, sensor_count + 1):
+                    message = check_anomalies(latest_data, sensor_id, line)
+                    temp_results.append({
+                        "timestamp": timestamp,
+                        "message": message
+                    })
+
+        with results_lock:
+            results = temp_results
+        print("✅ Updated results:", temp_results)
+        time.sleep(30)
+
+# Start background thread
+thread = threading.Thread(target=monitor_sensors, daemon=True)
+thread.start()
+
+@app.route('/')
+def index():
+    print("🌐 Serving results:", results)
+    return render_template('index.html', results=results)
+
+@app.route('/charts', methods=['GET', 'POST'])
+def charts():
+    cursor.execute("""SELECT DISTINCT timestamp FROM sensor_flags WHERE line_number = 4 ORDER BY timestamp DESC""")
+    line4_timestamps = [row[0] for row in cursor.fetchall()]
+
+    cursor.execute("""SELECT DISTINCT timestamp FROM sensor_flags WHERE line_number = 5 ORDER BY timestamp DESC""")
+    line5_timestamps = [row[0] for row in cursor.fetchall()]
+
+    selected_timestamp = line4_timestamps[0] if line4_timestamps else None
+
+    if request.method == 'POST':
+        selected_timestamp = request.form['timestamp']
+
+    cursor.execute("""SELECT status FROM sensor_flags WHERE line_number = 4 AND timestamp = %s""", (selected_timestamp,))
+    line4_data = [status_mapping.get(row[0], row[0]) for row in cursor.fetchall()]  # Mapping ENUM to full text
+
+    cursor.execute("""SELECT status FROM sensor_flags WHERE line_number = 5 AND timestamp = %s""", (selected_timestamp,))
+    line5_data = [status_mapping.get(row[0], row[0]) for row in cursor.fetchall()]  # Mapping ENUM to full text
+
+    # Count green, amber, and red statuses for line 4 and line 5
+    line4_data_green = len([x for x in line4_data if x == '🟢 GREEN (Normal)'])
+    line4_data_amber = len([x for x in line4_data if x == '🟠 AMBER (Warning)'])
+    line4_data_red = len([x for x in line4_data if x == '🔴 RED (Anomaly)'])
+
+    line5_data_green = len([x for x in line5_data if x == '🟢 GREEN (Normal)'])
+    line5_data_amber = len([x for x in line5_data if x == '🟠 AMBER (Warning)'])
+    line5_data_red = len([x for x in line5_data if x == '🔴 RED (Anomaly)'])
+
+    # If no data for the selected timestamp, assign empty arrays
+    if not line4_data:
+        line4_data = [""] * 8  # Adjust length if needed
+    if not line5_data:
+        line5_data = [""] * 17  # Adjust length if needed
+
+    return render_template('charts.html', 
+                           line4_data=line4_data, 
+                           line5_data=line5_data, 
+                           line4_data_green=line4_data_green,
+                           line4_data_amber=line4_data_amber,
+                           line4_data_red=line4_data_red,
+                           line5_data_green=line5_data_green,
+                           line5_data_amber=line5_data_amber,
+                           line5_data_red=line5_data_red,
+                           line4_timestamps=line4_timestamps, 
+                           line5_timestamps=line5_timestamps,
+                           selected_timestamp=selected_timestamp)
+
+if __name__ == '__main__':
+    app.run(debug=True, use_reloader=False)
