@@ -1,1 +1,198 @@
+<?php
+session_start();
+
+// Database configuration
+$servername = "localhost";
+$dbusername = "root";
+$dbpassword = "";
+$dbname = "rakusens";
+
+// Create connection
+$conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// ADMIN FUNCTIONS
+function isAdminLoggedIn() {
+    return isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
+}
+
+function isUserLoggedIn() {
+    return isset($_SESSION['username']);
+}
+
+// Handle Admin Login
+function handleAdminLogin() {
+    global $conn;
+    if (isset($_POST['admin_login'])) {
+        $username = $conn->real_escape_string($_POST['username']);
+        $password = $_POST['password'];
+        
+        $sql = "SELECT * FROM admins WHERE username = '$username' AND password = '$password'";
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
+            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['admin_username'] = $username;
+        } else {
+            $admin_login_error = "Invalid admin credentials";
+        }
+    }
+}
+
+// Handle User Login
+function handleUserLogin() {
+    global $conn;
+    if (isset($_POST['user_login'])) {
+        $username = $conn->real_escape_string($_POST['username']);
+        $password = $_POST['password'];
+
+        $sql = "SELECT * FROM users WHERE username = '$username'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['username'] = $username;
+                $_SESSION['user_id'] = $user['id'];
+                header("Location: welcome.php");
+                exit();
+            } else {
+                $user_login_error = "Invalid password.";
+            }
+        } else {
+            $user_login_error = "No user found with that username.";
+        }
+    }
+}
+
+// Add new user
+function handleAddUser() {
+    global $conn;
+    if (isset($_POST['add_user']) && isAdminLoggedIn()) {
+        $username = $conn->real_escape_string($_POST['new_username']);
+        $email = $conn->real_escape_string($_POST['new_email']);
+        $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+        
+        $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
+        
+        if ($conn->query($sql)) {
+            $add_success = "User added successfully!";
+        } else {
+            $add_error = "Error adding user: " . $conn->error;
+        }
+    }
+}
+
+// Remove user
+function handleDeleteUser() {
+    global $conn;
+    if (isset($_GET['delete_user']) && isAdminLoggedIn()) {
+        $user_id = (int)$_GET['delete_user'];
+        
+        $sql = "DELETE FROM users WHERE id = $user_id";
+        
+        if ($conn->query($sql)) {
+            $delete_success = "User deleted successfully!";
+        } else {
+            $delete_error = "Error deleting user: " . $conn->error;
+        }
+    }
+}
+
+// Assert functions for testing
+function assertEquals($input, $expectedOutput) {
+    if ($input == $expectedOutput) {
+        echo 'SUCCESS';
+        return TRUE;
+    } else {
+        echo 'FAILED';
+        return FALSE;
+    }
+}
+
+function assertTrue($input) {
+    if ($input == TRUE) {
+        echo 'SUCCESS';
+        return TRUE;
+    } else {
+        echo 'FAILED';
+        return FALSE;
+    }
+}
+
+// Test database connection
+function testDatabaseConnection() {
+    global $conn;
+    assertTrue($conn->connect_error === null);
+}
+
+// Test admin login functionality
+function testAdminLogin() {
+    // Simulate POST data for admin login
+    $_POST['admin_login'] = true;
+    $_POST['username'] = 'admin';  // Replace with a valid admin username
+    $_POST['password'] = 'password';  // Replace with a valid admin password
+
+    // Simulate the admin login action
+    handleAdminLogin();
+    
+    assertTrue(isAdminLoggedIn());
+}
+
+// Test user login functionality
+function testUserLogin() {
+    // Simulate POST data for user login
+    $_POST['user_login'] = true;
+    $_POST['username'] = 'testuser';  // Replace with a valid test user username
+    $_POST['password'] = 'testpassword';  // Replace with a valid test user password
+
+    // Simulate the user login action
+    handleUserLogin();
+    
+    assertTrue(isUserLoggedIn());
+}
+
+// Test adding a new user
+function testAddUser() {
+    $_POST['add_user'] = true;
+    $_POST['new_username'] = 'new_user';
+    $_POST['new_email'] = 'newuser@example.com';
+    $_POST['new_password'] = 'newpassword123';
+
+    // Simulate adding a new user
+    handleAddUser();
+    
+    assertEquals('User added successfully!', $add_success);
+}
+
+// Test deleting a user
+function testDeleteUser() {
+    $_GET['delete_user'] = 1;  // Replace with a valid user ID for deletion
+
+    // Simulate deleting a user
+    handleDeleteUser();
+    
+    assertEquals('User deleted successfully!', $delete_success);
+}
+
+// Test all functions
+echo '<h1>Test Database Connection</h1>';
+testDatabaseConnection();
+
+echo '<h1>Test Admin Login</h1>';
+testAdminLogin();
+
+echo '<h1>Test User Login</h1>';
+testUserLogin();
+
+echo '<h1>Test Add User</h1>';
+testAddUser();
+
+echo '<h1>Test Delete User</h1>';
+testDeleteUser();
+?>
 
