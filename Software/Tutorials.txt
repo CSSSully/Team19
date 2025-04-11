@@ -7,7 +7,7 @@ path file should look like this:
 C://xampp/htdocs/final_website/
 
 Access the website by visiting
-http://localhost:8083/cw/homepage.html
+http://localhost:8083/final_website/homepage.html
 
 Make sure that the files "models","ml_model_runner.py" and "simulate_data.py" are in the same folder.
 
