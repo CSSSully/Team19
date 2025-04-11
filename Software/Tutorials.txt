@@ -2,9 +2,10 @@ Team 19
 
 Tutorial how to run codes in the Software folder.
 
-Make sure the folder named "final_website" is in the 'htdocs' folder in xampp
+Download the zip file inside the folder called Wesbite which is located within the Software folder.
+Extract the folder and make sure the folder named "final_website" is in the 'htdocs' folder in your xampp folder
 path file should look like this:
-C://xampp/htdocs/final_website/
+C:../xampp/htdocs/final_website/
 
 Access the website by visiting
 http://localhost:8083/final_website/homepage.html
