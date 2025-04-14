@@ -5,10 +5,10 @@ Tutorial how to run codes in the Software folder.
 Download the zip file inside the folder called Wesbite which is located within the Software folder.
 Extract the folder and make sure the folder named "final_website" is in the 'htdocs' folder in your xampp folder
 path file should look like this:
-C:../xampp/htdocs/final_website/
+C:../xampp/htdocs/final_website-3/
 
 Access the website by visiting
-http://localhost:8083/final_website/homepage.html
+http://localhost:8083/final_website-3/homepage.html
 
 Make sure that the files "models","ml_model_runner.py" and "simulate_data.py" are in the same folder.
 
@@ -121,6 +121,8 @@ HOW TO FLAG DATA UNSING ML
 
 5. type   pip install prophet
 
-6. run the code (if 30 seconds is too quick last line of the code change the number 30 to whatever u want)
+6. type pip install flask
+
+7. run the code (if 30 seconds is too quick last line of the code change the number 30 to whatever u want)
 
 
