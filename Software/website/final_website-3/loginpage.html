@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Rakusen's</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      background-color: #0e0d57;
+      color: rgb(121, 111, 111);
+      font-family: sans-serif;
+    }
+  
+    form {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      margin: 100px auto;
+    }
+  
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="auth-buttons">
+    <button onclick="window.location.href='homepage.html'">Home</button>
+    <button onclick="window.location.href='registerpage.html'">Register</button>
+    <button onclick="window.location.href='loginpage.html'">Login</button>
+    <button onclick="window.location.href='admin.html'">Admin Page</button>
+    <button onclick="window.location.href='index.html'">Index Page</button>
+    <button onclick="window.location.href='charts.html'">Charts Page</button>
+
+  </div>
+  
+  <div class="login-container">
+    <h2>Login to Your Account</h2>
+    <form action="#" method="post">
+      <label for="username">Username:</label>
+      <input type="username" id="username" name="username" required />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required />
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+</body>
+</html>
