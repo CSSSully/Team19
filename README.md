@@ -2,7 +2,7 @@ Team 19
 
 Tutorial how to run codes in the Software folder.
 
-Download the folder called website, inside there is a subfolder called templates, these are all the web pages and php needed to run the wesbite. We recommend using xampp to run the site.
+Download the folder called final website which can be found in 'Software', inside there is a subfolder called templates, these are all the web pages and php files needed to run the wesbite. We recommend using xampp to run the site.
 
 Make sure that the files "models","ml_model_runner.py" and "simulate_data.py" are in the same folder.
 
