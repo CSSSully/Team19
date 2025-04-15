@@ -8,9 +8,10 @@ path file should look like this:
 C:../xampp/htdocs/final_website-3/
 
 Access the website by visiting
-http://localhost:8083/final_website-3/homepage.html
+http://localhost:8083/homepage
 
 Make sure that the files "models","ml_model_runner.py" and "simulate_data.py" are in the same folder.
+Make sure you download the models and insert them into the "models" folder.
 
 
 HOW TO SIMULATE DATA
