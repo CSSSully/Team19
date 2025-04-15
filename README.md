@@ -89,22 +89,22 @@ CREATE TABLE IF NOT EXISTS line5_sensors (
 DELETE FROM `users` WHERE `id` = 1;  /* Replace 1 with actual user_id */
 
 
-
+1 create a python environment in vscode and make sure the files "models","ml_model_runner.py" and "simulate_data.py" are in the   same folder and create a python environment in vs code and make sure it is in the python environment workspace in vscode 
 
 2. Open simulate_data.py in vscode
    
 3. type python --version   inside vscode terminal to check if you have python
    if error you need to download or make the right path
 
-3.1 create a python environment in vscode and make sure the files "models","ml_model_runner.py" and "simulate_data.py" are in the   same folder and create a python environment in vs code and make sure it is in the python environment workspace in vscode 
-
 4. type   pip install mysql-connector-python    inside vscode terminal
+   
+5. type pip install flask      inside vscode terminal
 
-5. type   pip install numpy     inside vscode terminal
+6. type   pip install numpy     inside vscode terminal
 
-6. Run the code (Every 30 seconds will insert data into database check on phpadmin if it works.)
+7. Run the code (Every 30 seconds will insert data into database check on phpadmin if it works.)
 
-7. You can stop the code by killing the terminal
+8. You can stop the code by killing the terminal
 
 
 
