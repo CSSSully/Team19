@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rakusens</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <div class="theme-switch-wrapper">
+    <label class="theme-switch" for="checkbox">
+      <input type="checkbox" id="checkbox">
+      <div class="slider round"></div>
+    </label>
+    <span></span>
+  </div>
+
+  <div class="top-section">
+    <div class="banner-container">
+      <img src="{{ url_for('static', filename='images/rakusensbanner-4-1024x256.png') }}" class="banner-img">
+    </div>
+
+    <div class="logo-container">
+      <h1>Rakusen's</h1>
+    </div>
+  </div>
+
+  <h2>Welcome, where would you like to go?</h2>
+
+  <div class="auth-buttons">
+    <button onclick="window.location.href='registerpage'">Sensors Page</button>
+    <button onclick="window.location.href='admin'">Admins Page</button>
+  </div>
+</body>
+</html>

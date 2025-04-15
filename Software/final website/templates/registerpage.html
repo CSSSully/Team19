@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Form</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script language="JavaScript" type="text/JavaScript">
+    function validate(userForm) {
+      var div = document.getElementById("usrmsg");
+      div.style.color = "red";
+      if (div.hasChildNodes()) div.removeChild(div.firstChild);
+      if (userForm.username.value.length == 0) {
+        div.appendChild(document.createTextNode("Name cannot be blank"));
+        userForm.username.focus();
+        return false;
+      }
+
+      div = document.getElementById("passwdmsg");
+      div.style.color = "red";
+      if (div.hasChildNodes()) div.removeChild(div.firstChild);
+      if (userForm.pma_password.value.length <= 8) {
+        div.appendChild(document.createTextNode("The password should be of at least size 8"));
+        userForm.pma_password.focus();
+        return false;
+      }
+
+      div = document.getElementById("repasswdmsg");
+      div.style.color = "red";
+      if (div.hasChildNodes()) div.removeChild(div.firstChild);
+      if (userForm.password.value != userForm.repassword.value) {
+        div.appendChild(document.createTextNode("The two passwords don't match"));
+        userForm.password.focus();
+        return false;
+      }
+
+      div = document.getElementById("emailmsg");
+      div.style.color = "red";
+      if (div.hasChildNodes()) div.removeChild(div.firstChild);
+      regex = /(^\w+\@\w+\.\w+)/;
+      match = regex.exec(userForm.emailaddress.value);
+      if (!match) {
+        div.appendChild(document.createTextNode("Invalid Email"));
+        userForm.emailaddress.focus();
+        return false;
+      }
+
+      return true;
+    }
+  </script>
+</head>
+<body>
+
+  <div class="auth-buttons">
+    <button onclick="window.location.href='homepage'">Home</button>
+    <button onclick="window.location.href='registerpage'">Register</button>
+    <button onclick="window.location.href='loginpage'">Login</button>
+    <button onclick="window.location.href='admin'">Admin Page</button>
+    <button onclick="window.location.href=''">Index Page</button>
+    <button onclick="window.location.href='charts'">Charts Page</button>
+  </div>
+
+  <h1 align="center">Register</h1>
+  <br />
+  <div align="center">
+    <form method="post" action="/registernewuser" onsubmit="return validate(this);">
+      <fieldset style="width:350px" align="center">
+        <legend align="left"><b>Signup</b></legend>
+        <div>
+          <label for="input_username">Username:</label>
+          <input type="text" name="username" size="24" /><br/><span id="usrmsg"></span>
+        </div>
+        <br/>
+        <div>
+          <label for="input_password">Password:</label>
+          <input type="password" name="pma_password" value="" size="24" /><br/><span id="passwdmsg"></span>
+        </div>
+        <br/>
+        <div>
+          <label for="input_password2">Re-enter Password:</label>
+          <input type="password" name="repassword" value="" size="24" /><br/><span id="repasswdmsg"></span>
+        </div>
+        <br/>
+        <div>
+          <label for="email">Email:</label>
+          <input type="text" name="emailaddress" value="" size="24" /><br/><span id="emailmsg"></span>
+        </div>
+      </fieldset>
+      <fieldset style="width:350px" align="center">
+        <input value="Signup" type="submit" name="Signup" />
+        <input value="Reset" type="reset" />
+      </fieldset>
+    </form>
+    <center>
+      <br><br><font><a href="{{ url_for('loginpage') }}">Already registered? Please Login</a></font>
+    </center>
+  </div>
+
+</body>
+</html>

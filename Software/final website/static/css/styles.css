@@ -1,0 +1,569 @@
+/* General body styling */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    color: black;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Dark mode styles */
+  #checkbox:checked ~ .top-section {
+    background-color: #1a1a1a;
+  }
+  
+  #checkbox:checked ~ .top-section h1 {
+    color: #e0e0e0;
+  }
+  
+  #checkbox:checked ~ h2 {
+    color: white;
+  }
+  
+  #checkbox:checked ~ body {
+    background-color: #121212;
+    color: white;
+  }
+  
+  /* Top section styling */
+  .top-section {
+    height: 29vh;
+    background-color: #0e0d57;
+  }
+  
+  /* Logo container styling */
+  .logo-container {
+    text-align: center;
+    padding-top: 10px;
+  }
+  
+  /* Heading 1 styling */
+  h1 {
+    font-size: 44px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    color: rgb(121, 111, 111);
+  }
+  
+  /* Heading 2 styling */
+  h2 {
+    font-size: 22px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    margin-top: 100px;
+    margin-left: 20px;
+  }
+  
+  /* Banner container styling */
+  .banner-container {
+    text-align: center;
+    padding-top: 10px;
+  }
+  
+  /* Banner image styling */
+  .banner-img {
+    width: 700px;
+    height: 200px;
+  }
+  
+  /* Toggle switch styles */
+  .theme-switch-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .theme-switch {
+    display: inline-block;
+    height: 34px;
+    position: relative;
+    width: 60px;
+  }
+  
+  .theme-switch input {
+    display: none;
+  }
+  
+  .slider {
+    background-color: #b7a672;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: 0.4s;
+  }
+  
+  .slider.round {
+    border-radius: 24px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  
+  .slider:before {
+    background-color: rgb(231, 230, 230);
+    bottom: 4px;
+    content: "";
+    height: 26px;
+    left: 4px;
+    position: absolute;
+    transition: 0.4s;
+    width: 26px;
+  }
+  
+  input:checked + .slider {
+    background-color: #685823;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  .auth-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 80px;
+  }
+  
+  .auth-buttons button {
+    padding: 16px 32px; 
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background-color: #004080;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .auth-buttons button:hover {
+    background-color: #0066cc;
+    transform: scale(1.05); 
+  }
+  .login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 120px auto;
+  padding: 30px;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container label {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.login-container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.login-container button {
+  margin-top: 20px;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  background-color: #004080;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background-color: #0066cc;
+}
+/* General body style */
+body {
+  background-color: #0e0d57;
+  color: rgb(121, 111, 111);
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Signup form container */
+form {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  margin: 100px auto;
+}
+
+/* Input fields and buttons */
+input[type="text"],
+input[type="password"],
+input[type="submit"],
+input[type="reset"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+}
+
+/* Submit and reset buttons */
+input[type="submit"],
+input[type="reset"] {
+  background-color: #1e1c91;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover,
+input[type="reset"]:hover {
+  background-color: #2a29a8;
+}
+
+/* Link at the bottom */
+a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Error message styles */
+span {
+  font-size: 0.9em;
+}
+/* General body styling */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Dark mode styles */
+#checkbox:checked ~ .top-section {
+  background-color: #1a1a1a;
+}
+
+#checkbox:checked ~ .top-section h1 {
+  color: #e0e0e0;
+}
+
+#checkbox:checked ~ h2 {
+  color: white;
+}
+
+#checkbox:checked ~ body {
+  background-color: #121212;
+  color: white;
+}
+
+/* Top section styling */
+.top-section {
+  height: 29vh;
+  background-color: #0e0d57;
+  color: white;
+}
+
+/* Logo container styling */
+.logo-container {
+  text-align: center;
+  padding-top: 10px;
+}
+
+/* Heading 1 styling */
+h1 {
+  font-size: 44px;
+  margin: 0;
+  color: white;
+}
+
+/* Heading 2 styling */
+h2 {
+  font-size: 22px;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+/* Banner container styling */
+.banner-container {
+  text-align: center;
+  padding-top: 10px;
+}
+
+/* Banner image styling */
+.banner-img {
+  width: 700px;
+  height: 200px;
+  max-width: 90%;
+  object-fit: contain;
+}
+
+/* Toggle switch styles */
+.theme-switch-wrapper {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 100;
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 34px;
+  position: relative;
+  width: 60px;
+}
+
+.theme-switch input {
+  display: none;
+}
+
+.slider {
+  background-color: #b7a672;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.4s;
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.slider:before {
+  background-color: rgb(231, 230, 230);
+  bottom: 4px;
+  content: "";
+  height: 26px;
+  left: 4px;
+  position: absolute;
+  transition: 0.4s;
+  width: 26px;
+}
+
+input:checked + .slider {
+  background-color: #685823;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* ===== NEW ADMIN STYLES ===== */
+
+/* Admin content area */
+.admin-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Admin Actions */
+.admin-actions {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.action-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.create-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.create-btn:hover {
+  background-color: #3e8e41;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn:not(:disabled):hover {
+  background-color: #d32f2f;
+}
+
+.delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* User table styles */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.user-table th, .user-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.user-table th {
+  background-color: #0e0d57;
+  color: white;
+  font-weight: 500;
+}
+
+.user-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Checkboxes */
+.user-table input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+/* Form styles */
+.admin-form {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.add-user-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.add-user-btn:hover {
+  background-color: #3e8e41;
+}
+
+.cancel-btn {
+  background-color: #757575;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #616161;
+}
+
+.logout-btn {
+  background-color: #f44336;
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+}
+
+/* Notifications */
+.notification {
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border-left: 4px solid #c62828;
+}
+
+.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #2e7d32;
+}
+
+/* Dark mode adjustments */
+#checkbox:checked ~ .admin-content .user-table tr:hover {
+  background-color: #2a2a2a;
+}
+
+#checkbox:checked ~ .admin-content .admin-form {
+  background: #2a2a2a;
+  color: white;
+}
+
+#checkbox:checked ~ .admin-content .form-input {
+  background-color: #333;
+  color: white;
+  border-color: #444;
+}

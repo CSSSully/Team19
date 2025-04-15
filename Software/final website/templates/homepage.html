@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rakusens</title>
+  <!-- Correct CSS path using Flask's url_for -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <!-- Toggle Switch -->
+  <div class="theme-switch-wrapper">
+    <label class="theme-switch" for="checkbox">
+      <input type="checkbox" id="checkbox">
+      <div class="slider round"></div>
+    </label>
+    <span></span>
+  </div>
+
+  <div class="top-section">
+    <div class="banner-container">
+      <!-- Correct image path using Flask's url_for -->
+      <img src="{{ url_for('static', filename='images/rakusensbanner-4-1024x256.png') }}" class="banner-img" alt="Rakusen's Banner">
+    </div>
+
+    <div class="logo-container">
+      <h1>Rakusen's</h1>
+    </div>
+  </div>
+
+  <h2>Visualisation dashboard for temperature data</h2>
+
+  <div class="auth-buttons">
+    <button onclick="window.location.href='homepage'">Home</button>
+    <button onclick="window.location.href='registerpage'">Register</button>
+    <button onclick="window.location.href='loginpage'">Login</button>
+    <button onclick="window.location.href='admin'">Admin Page</button>
+    <button onclick="window.location.href=''">Index Page</button>
+    <button onclick="window.location.href='charts'">Charts Page</button>
+  </div>
+</body>
+</html>

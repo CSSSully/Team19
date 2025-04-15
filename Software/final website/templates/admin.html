@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rakusens Admin</title>
+
+  <!-- ✅ Corrected CSS path using Flask's url_for -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="auth-buttons">
+    <button onclick="window.location.href='homepage'">Home</button>
+    <button onclick="window.location.href='registerpage'">Register</button>
+    <button onclick="window.location.href='loginpage'">Login</button>
+    <button onclick="window.location.href='admin'">Admin Page</button>
+    <button onclick="window.location.href=''">Index Page</button>
+    <button onclick="window.location.href='charts'">Charts Page</button>
+  </div>
+
+  <!-- Toggle Switch -->
+  <div class="theme-switch-wrapper">
+    <label class="theme-switch" for="checkbox">
+      <input type="checkbox" id="checkbox">
+      <div class="slider round"></div>
+    </label>
+    <span></span>
+  </div>
+
+  <div class="top-section">
+    <div class="banner-container">
+      <!-- ✅ Corrected image path using Flask's url_for -->
+      <img src="{{ url_for('static', filename='images/rakusensbanner-4-1024x256.png') }}" class="banner-img" alt="Rakusen's Banner">
+    </div>
+
+    <div class="logo-container">
+      <h1>Rakusen's Admin Panel</h1>
+    </div>
+  </div>
+
+  <main class="admin-content">
+    <?php if (!isAdminLoggedIn()): ?>
+      <!-- Admin Login Form (existing code) -->
+      <section class="admin-login-section">
+        <h2 class="section-title">Admin Login</h2>
+        <?php if (isset($admin_login_error)): ?>
+          <div class="notification error"><?php echo $admin_login_error; ?></div>
+        <?php endif; ?>
+        <form method="post" class="admin-form">
+          <div class="form-group">
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" id="username" name="username" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" id="password" name="password" class="form-input" required>
+          </div>
+          <button type="submit" name="admin_login" class="btn login-btn">Login</button>
+        </form>
+      </section>
+    <?php else: ?>
+      <!-- Admin Content with New Buttons -->
+      <section class="admin-panel-section">
+        <div class="admin-header">
+          <h2 class="section-title">User Management</h2>
+          <a href="?admin_logout=1" class="btn logout-btn">Logout</a>
+        </div>
+
+        <div class="admin-actions">
+          <button id="createUserBtn" class="action-btn create-btn" onclick="document.getElementById('addUserForm').style.display='block'">
+            <i class="fas fa-user-plus"></i> Create New User
+          </button>
+          
+          <button id="deleteUsersBtn" class="action-btn delete-btn" disabled>
+            <i class="fas fa-user-minus"></i> Delete Selected
+          </button>
+        </div>
+
+        <div id="addUserForm" style="display:none;">
+          <h3 class="subsection-title">Add New User</h3>
+          <?php if (isset($add_success)): ?>
+            <div class="notification success"><?php echo $add_success; ?></div>
+          <?php endif; ?>
+          <?php if (isset($add_error)): ?>
+            <div class="notification error"><?php echo $add_error; ?></div>
+          <?php endif; ?>
+          <form method="post" class="admin-form">
+            <div class="form-group">
+              <label for="new_username" class="form-label">Username:</label>
+              <input type="text" id="new_username" name="new_username" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="new_email" class="form-label">Email:</label>
+              <input type="email" id="new_email" name="new_email" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="new_password" class="form-label">Password:</label>
+              <input type="password" id="new_password" name="new_password" class="form-input" required>
+            </div>
+            <div class="form-actions">
+              <button type="submit" name="add_user" class="btn add-user-btn">Add User</button>
+              <button type="button" class="btn cancel-btn" onclick="document.getElementById('addUserForm').style.display='none'">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="user-list-section">
+          <h3 class="subsection-title">Current Users</h3>
+          <?php if (isset($delete_success)): ?>
+            <div class="notification success"><?php echo $delete_success; ?></div>
+          <?php endif; ?>
+          <?php if (isset($delete_error)): ?>
+            <div class="notification error"><?php echo $delete_error; ?></div>
+          <?php endif; ?>
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th class="table-header"><input type="checkbox" id="selectAll"></th>
+                <th class="table-header">ID</th>
+                <th class="table-header">Username</th>
+                <th class="table-header">Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php while ($user = $users->fetch_assoc()): ?>
+                <tr class="table-row">
+                  <td class="table-data"><input type="checkbox" class="user-checkbox" value="<?= $user['id'] ?>"></td>
+                  <td class="table-data"><?= $user['id'] ?></td>
+                  <td class="table-data"><?= htmlspecialchars($user['username']) ?></td>
+                  <td class="table-data"><?= htmlspecialchars($user['email']) ?></td>
+                </tr>
+              <?php endwhile; ?>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    <?php endif; ?>
+  </main>
+
+  <script>
+    const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+    function switchTheme(e) {
+      if (e.target.checked) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }    
+    }
+    toggleSwitch.addEventListener('change', switchTheme, false);
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const deleteBtn = document.getElementById('deleteUsersBtn');
+      const checkboxes = document.querySelectorAll('.user-checkbox');
+      const selectAll = document.getElementById('selectAll');
+
+      selectAll.addEventListener('change', function() {
+        checkboxes.forEach(checkbox => {
+          checkbox.checked = selectAll.checked;
+        });
+        deleteBtn.disabled = !selectAll.checked;
+      });
+
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+          deleteBtn.disabled = !anyChecked;
+          selectAll.checked = Array.from(checkboxes).every(cb => cb.checked);
+        });
+      });
+
+      deleteBtn.addEventListener('click', function() {
+        const selectedIds = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+          .map(checkbox => checkbox.value);
+        if (selectedIds.length > 0 && confirm('Are you sure you want to delete the selected users?')) {
+          window.location.href = `?delete_users=${selectedIds.join(',')}`;
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

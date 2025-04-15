@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Status Pie Chart</title>
+
+    <!-- ✅ Flask-compatible CSS path -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="auth-buttons">
+        <button onclick="window.location.href='homepage'">Home</button>
+        <button onclick="window.location.href='registerpage'">Register</button>
+        <button onclick="window.location.href='loginpage'">Login</button>
+        <button onclick="window.location.href='admin'">Admin Page</button>
+        <button onclick="window.location.href=''">Index Page</button>
+        <button onclick="window.location.href='charts'">Charts Page</button>
+    </div>
+
+    <h1 style="text-align: center;">Sensor Status Pie Chart</h1>
+
+    <form method="POST">
+        <label for="timestamp">Select Timestamp:</label>
+        <select name="timestamp" id="timestamp">
+            {% for timestamp in line4_timestamps %}
+                <option value="{{ timestamp }}" {% if timestamp == selected_timestamp %}selected{% endif %}>{{ timestamp }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Line 4 Sensor Status</h2>
+    <canvas id="piechart_line4" width="400" height="400"></canvas>
+
+    <h2>Line 5 Sensor Status</h2>
+    <canvas id="piechart_line5" width="400" height="400"></canvas>
+
+    <script>
+        // Data from Flask
+        var line4_data_green = {{ line4_data_green }};
+        var line4_data_amber = {{ line4_data_amber }};
+        var line4_data_red = {{ line4_data_red }};
+        
+        var line5_data_green = {{ line5_data_green }};
+        var line5_data_amber = {{ line5_data_amber }};
+        var line5_data_red = {{ line5_data_red }};
+        
+        // Line 4 Chart
+        var ctxLine4 = document.getElementById('piechart_line4').getContext('2d');
+        var pieChartLine4 = new Chart(ctxLine4, {
+            type: 'pie',
+            data: {
+                labels: ['🟢 GREEN (Normal)', '🟠 AMBER (Warning)', '🔴 RED (Anomaly)'],
+                datasets: [{
+                    label: 'Line 4 Sensor Status',
+                    data: [line4_data_green, line4_data_amber, line4_data_red],
+                    backgroundColor: ['#4caf50', '#ff9800', '#f44336'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Line 5 Chart
+        var ctxLine5 = document.getElementById('piechart_line5').getContext('2d');
+        var pieChartLine5 = new Chart(ctxLine5, {
+            type: 'pie',
+            data: {
+                labels: ['🟢 GREEN (Normal)', '🟠 AMBER (Warning)', '🔴 RED (Anomaly)'],
+                datasets: [{
+                    label: 'Line 5 Sensor Status',
+                    data: [line5_data_green, line5_data_amber, line5_data_red],
+                    backgroundColor: ['#4caf50', '#ff9800', '#f44336'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
